@@ -41,6 +41,8 @@ public class MyUI extends UI {
 		// Decidimos que columnas mostrar, tienen que coincidir con los atributos de la
 		// clase Cliente
 		grid.setColumns("nombre", "apellido", "email");
+		//Definimos que la tabla ocupe todo el ancho maximo que pueda
+		grid.setSizeFull();
 
 		actualizarTabla();
 
@@ -65,7 +67,7 @@ public class MyUI extends UI {
 		setContent(layout);
 	}
 
-	private void actualizarTabla() {
+	public void actualizarTabla() {
 		// Actualizamos los calores de la tabla con le valor que escribimos en el filtro
 		grid.setItems(clienteService.findAll(filterText.getValue()));
 	}

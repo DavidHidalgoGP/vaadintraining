@@ -53,7 +53,7 @@ public class ClienteService {
 	public List<Cliente> findAll(String cadena) {
 		return contactos.values().stream().filter(contacto -> {
 			return (cadena == null || cadena.isEmpty())
-					&& (contacto.getNombre().toLowerCase().contains(cadena.toLowerCase()) || contacto.getApellido().toLowerCase().contains(cadena.toLowerCase()));
+					|| (contacto.getNombre().toLowerCase().contains(cadena.toLowerCase()) || contacto.getApellido().toLowerCase().contains(cadena.toLowerCase()));
 		}).collect(Collectors.toList());
 
 	}
@@ -66,7 +66,7 @@ public class ClienteService {
 		contactos.remove(cliente.getId());
 	}
 
-	private void guardar(Cliente cliente) {
+	public void guardar(Cliente cliente) {
 		// TODO Auto-generated method stub
 		if (cliente == null) {
 			return;
