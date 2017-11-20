@@ -19,13 +19,13 @@ import es.ayesavaadin.Ex002.cliente.ClienteService;
 import es.ayesavaadin.Ex002.cliente.ClienteView;
 
 @SuppressWarnings("serial")
-public class LibrosPrestadosView extends VerticalLayout implements View {
+public class LibrosPrestadosView extends HorizontalLayout implements View {
 	private LibroService libroService = LibroService.getInstance();
 	private ClienteService clienteservice = ClienteService.getInstance();
 
-	private Grid<Libro> grid = new Grid<>(Libro.class);
+	private Grid<Libro> gridLibros = new Grid<>(Libro.class);
 	private Grid<Cliente> gridClientes = new Grid<>(Cliente.class);
-	final TextField filterText = new TextField();
+	final TextField filterTextLibros = new TextField();
 	final TextField filterTextCliente = new TextField();
 	private Navigator navigator;
 
@@ -34,12 +34,12 @@ public class LibrosPrestadosView extends VerticalLayout implements View {
 	public LibrosPrestadosView(Navigator navigator) {
 		this.navigator = navigator;
 		// Decidimos el modo de seleción en la tabla (multiple, uno a uno, etc..)
-		grid.setSelectionMode(SelectionMode.SINGLE);
+		gridLibros.setSelectionMode(SelectionMode.SINGLE);
 		// Decidimos que columnas mostrar, tienen que coincidir con los atributos de la
 		// clase Cliente
-		grid.setColumns("isbn", "nombre", "autor", "cliente");
+		gridLibros.setColumns("isbn", "nombre", "autor", "cliente");
 		// Definimos que la tabla ocupe todo el ancho maximo que pueda
-		grid.setSizeFull();
+		gridLibros.setSizeFull();
 
 		// Decidimos el modo de seleción en la tabla (multiple, uno a uno, etc..)
 		gridClientes.setSelectionMode(SelectionMode.SINGLE);
@@ -51,15 +51,16 @@ public class LibrosPrestadosView extends VerticalLayout implements View {
 
 		actualizarTablaLibro();
 		actualizarTablaCliente();
+	
 
-		Button borrarFiltro = new Button(FontAwesome.TIMES);
-		borrarFiltro.setDescription("Borrar filtro");
-		borrarFiltro.addClickListener(e -> filterText.clear());
-		filterText.setPlaceholder("Filtrar por nombre:");
+		Button borrarFiltroLibros = new Button(FontAwesome.TIMES);
+		borrarFiltroLibros.setDescription("Borrar filtro");
+		borrarFiltroLibros.addClickListener(e -> filterTextLibros.clear());
+		filterTextLibros.setPlaceholder("Filtrar por nombre:");
 		// Definimos el evento para cuando escribamos en el filtro se actualice la tabla
-		filterText.addValueChangeListener(e -> actualizarTablaLibro());
+		filterTextLibros.addValueChangeListener(e -> actualizarTablaLibro());
 		// ValueChangeMode.LAZY -> espera un tiempo antes de lanzar el evento
-		filterText.setValueChangeMode(ValueChangeMode.LAZY);
+		filterTextLibros.setValueChangeMode(ValueChangeMode.LAZY);
 
 		Button borrarFiltroCliente = new Button(FontAwesome.TIMES);
 		borrarFiltroCliente.setDescription("Borrar filtro");
@@ -71,40 +72,49 @@ public class LibrosPrestadosView extends VerticalLayout implements View {
 		filterTextCliente.setValueChangeMode(ValueChangeMode.LAZY);
 
 		// Definir layout especifico
-		CssLayout filtrado = new CssLayout();
-		filtrado.addComponent(filterText);
-		filtrado.addComponent(borrarFiltro);
+		CssLayout filtradoLibros = new CssLayout();
+		filtradoLibros.addComponent(filterTextLibros);
+		filtradoLibros.addComponent(borrarFiltroLibros);
+		
 		CssLayout filtradoCliente = new CssLayout();
 		filtradoCliente.addComponent(filterTextCliente);
 		filtradoCliente.addComponent(borrarFiltroCliente);
+		
 		// Asignar estilo especifico al layout
-		filtrado.setStyleName(ValoTheme.LAYOUT_COMPONENT_GROUP);
+		filtradoLibros.setStyleName(ValoTheme.LAYOUT_COMPONENT_GROUP);
 		filtradoCliente.setStyleName(ValoTheme.LAYOUT_COMPONENT_GROUP);
+		
 		HorizontalLayout botonera = new HorizontalLayout();
 		Button prestar = new Button();
 		prestar.setCaption("Prestar");
 		prestar.setVisible(false);
 		prestar.setStyleName(ValoTheme.BUTTON_PRIMARY);
 		prestar.addClickListener(event -> this.navigator.navigateTo(ClienteView.NAME));
-		grid.asSingleSelect().addValueChangeListener(evento -> {
-			prestar.setVisible(true);
+		gridLibros.asSingleSelect().addValueChangeListener(evento -> {
+			if(gridClientes.asSingleSelect().getValue()!=null){
+				prestar.setVisible(true);
+			}else{
+				prestar.setVisible(true);
+			}
 		});
-		botonera.addComponents(filtrado, prestar);
+		gridClientes.asSingleSelect().addValueChangeListener(evento->{
+			if(gridLibros.asSingleSelect().getValue()!=null){
+				prestar.setVisible(true);
+			}else{
+				prestar.setVisible(false);
+			}
+		});
+		botonera.addComponents(filtradoLibros, prestar);
 		VerticalLayout layoutLibros = new VerticalLayout();
-		layoutLibros.addComponents(botonera, grid);
+		layoutLibros.addComponents(botonera, gridLibros);
 		VerticalLayout layoutClientes = new VerticalLayout();
 		layoutLibros.addComponents(filtradoCliente, gridClientes);
-		HorizontalLayout listados = new HorizontalLayout();
-		listados.addComponents(layoutLibros, layoutClientes);
-		this.setExpandRatio(layoutClientes, 1);
-		this.setExpandRatio(layoutLibros, 1);
-
-		this.addComponents(botonera, grid);
+		this.addComponents(layoutLibros, layoutClientes);
 	}
 
 	public void actualizarTablaLibro() {
 		// Actualizamos los calores de la tabla con le valor que escribimos en el filtro
-		grid.setItems(libroService.findAll(filterText.getValue()));
+		gridLibros.setItems(libroService.findAll(filterTextLibros.getValue()));
 
 	}
 
