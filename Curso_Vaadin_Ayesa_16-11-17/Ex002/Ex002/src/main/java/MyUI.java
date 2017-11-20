@@ -1,4 +1,3 @@
-package es.dhg.cursovaadinayesa.Ex001;
 
 import javax.servlet.annotation.WebServlet;
 
@@ -8,6 +7,9 @@ import com.vaadin.navigator.Navigator;
 import com.vaadin.server.VaadinRequest;
 import com.vaadin.server.VaadinServlet;
 import com.vaadin.ui.UI;
+
+import es.ayesavaadin.Ex002.cliente.ClienteView;
+import es.ayesavaadin.Ex002.libro.LibrosPrestadosView;
 
 /**
  * This UI is the application entry point. A UI may either represent a browser
@@ -24,21 +26,15 @@ public class MyUI extends UI {
 
 	@Override
 	protected void init(VaadinRequest vaadinRequest) {
-		navigator= new Navigator(this, this);
-		//Se declaran las vistas que van a ser usadas
-		navigator.addView(PruebaView.NAME, new PruebaView(navigator));
+		navigator = new Navigator(this, this);
+		// Se declaran las vistas que van a ser usadas
+		navigator.addView(LibrosPrestadosView.NAME, new LibrosPrestadosView(navigator));
 		navigator.addView(ClienteView.NAME, new ClienteView(navigator));
-		//Vista de inicio por defecto
-		navigator.navigateTo(ClienteView.NAME);
-		
+		// Vista de inicio por defecto
+		navigator.navigateTo(LibrosPrestadosView.NAME);
 	}
 
-	/* Definicion del servlet */
 	@WebServlet(urlPatterns = "/*", name = "MyUIServlet", asyncSupported = true)
-	/*
-	 * Configuración del servlet - ui -> interfaz grafica que se usará para ese
-	 * servlet - productionmode -> Comprimir ficheros o no
-	 */
 	@VaadinServletConfiguration(ui = MyUI.class, productionMode = false)
 	public static class MyUIServlet extends VaadinServlet {
 	}
