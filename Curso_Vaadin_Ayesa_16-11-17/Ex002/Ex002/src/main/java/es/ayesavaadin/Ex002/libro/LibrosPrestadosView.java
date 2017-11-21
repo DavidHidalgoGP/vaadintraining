@@ -85,7 +85,7 @@ public class LibrosPrestadosView extends HorizontalLayout implements View {
 		// Asignar estilo especifico al layout
 		filtradoLibros.setStyleName(ValoTheme.LAYOUT_COMPONENT_GROUP);
 		filtradoCliente.setStyleName(ValoTheme.LAYOUT_COMPONENT_GROUP);
-
+		//Botonera para botones prestar, devolver y filtrado de la tabla libros
 		HorizontalLayout botonera = new HorizontalLayout();
 		Button prestar = new Button();
 		prestar.setCaption("Prestar");
@@ -107,14 +107,24 @@ public class LibrosPrestadosView extends HorizontalLayout implements View {
 									gridLibros.asSingleSelect().getValue());
 							actualizarTablaLibro();
 							gridClientes.deselectAll();
-							libroPrestado=null;
-							cliente=null;
+							libroPrestado = null;
+							cliente = null;
 						}
 					}
 
 				}
 			}
 
+		});
+		Button devolver = new Button();
+		devolver.setCaption("Devolver");
+		devolver.addClickListener(event -> {
+			if(libroPrestado!=null) {
+				libroService.devolver(libroPrestado);
+				actualizarTablaLibro();
+			}else {
+				Notification.show("¡ADVERTENCIA!", "Debe seleccionar un libro", Notification.Type.WARNING_MESSAGE);
+			}
 		});
 		gridLibros.asSingleSelect().addValueChangeListener(evento -> {
 			if (gridLibros.asSingleSelect().getValue() != null) {
@@ -126,13 +136,16 @@ public class LibrosPrestadosView extends HorizontalLayout implements View {
 				this.cliente = gridClientes.asSingleSelect().getValue();
 			}
 		});
-		botonera.addComponents(filtradoLibros, prestar);
+		botonera.addComponents(filtradoLibros, prestar,devolver);
+		//Layout para botonera y tabla de libros
 		VerticalLayout layoutLibros = new VerticalLayout();
 		layoutLibros.addComponents(botonera, gridLibros);
+		//Layout para filtrado de clientes y tabla clientes
 		VerticalLayout layoutClientes = new VerticalLayout();
 		layoutClientes.addComponents(filtradoCliente, gridClientes);
 		this.addComponents(layoutLibros, layoutClientes);
 		this.setSizeFull();
+		//Hacemos que la tabla de libros ocupe mas que la de clientes
 		this.setExpandRatio(layoutLibros, 2);
 		this.setExpandRatio(layoutClientes, 1);
 	}

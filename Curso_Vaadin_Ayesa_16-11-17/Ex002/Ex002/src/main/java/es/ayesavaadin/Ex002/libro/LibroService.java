@@ -57,8 +57,14 @@ public class LibroService {
 		if(cliente!=null && libros.containsValue(libro)) {
 			Libro libroAux=libros.get(libro.getIsbn());
 			libroAux.setCliente(cliente);
-		}
-		
+		}	
+	}
+	
+	public void devolver(Libro libro) {
+		if(libros.containsValue(libro)) {
+			Libro libroAux=libros.get(libro.getIsbn());
+			libroAux.setCliente(null);
+		}	
 	}
 
 	public void guardar(Libro libro) {
