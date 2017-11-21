@@ -5,6 +5,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+import es.ayesavaadin.Ex002.cliente.Cliente;
+
 public class LibroService {
 	private static LibroService instancia;
 	private final Map<String, Libro> libros = new HashMap<>();
@@ -47,8 +49,16 @@ public class LibroService {
 		return libros.size();
 	}
 
-	public void borrar(Libro cliente) {
-		libros.remove(cliente.getIsbn());
+	public void borrar(Libro libro) {
+		libros.remove(libro.getIsbn());
+	}
+	
+	public void prestar(Cliente cliente, Libro libro) {
+		if(cliente!=null && libros.containsValue(libro)) {
+			Libro libroAux=libros.get(libro.getIsbn());
+			libroAux.setCliente(cliente);
+		}
+		
 	}
 
 	public void guardar(Libro libro) {
